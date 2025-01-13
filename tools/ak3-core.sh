@@ -777,20 +777,6 @@ patch_ueventd() {
   fi;
 }
 
-do_osversioncheck() {
-ui_print "-> Checking boot OS Version...";
-local current_osver=$(file_getprop $SPLITIMG/header os_version);
-
-if [ -n "$current_osver" ] && [ "$current_osver" != "13.0.0" ]; then
-    ui_print "-> Supported Boot OS Version :)"
-else
-    ui_print "-> Unsupported Boot OS Version :("
-    ui_print "-> Your Boot OS Version is $current_osver"
-    [ "$(file_getprop $AKHOME/anykernel.sh do.cleanup)" = "1" ] && cleanup
-    exit 1
-fi
-}
-
 ###
 
 ### configuration/setup functions:
