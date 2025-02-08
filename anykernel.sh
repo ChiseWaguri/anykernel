@@ -90,14 +90,33 @@ if [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
 	fi
 fi
 
-kernel_version=$(cat /proc/version | awk -F '-' '{print $1}' | awk '{print $3}')
-case "$kernel_version" in
-    5.10.*) supp=true ;;
-    *) supp=false ;;
-esac
+if [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
+	# KernelSU
+	if keycode_select "Install KSUxSUSFS?"; then
+		if [ $((magisk_patched & 3)) -eq 1 ]; then
+			ui_print "- Magisk detected!"
+			ui_print "- Magisk and KernelSU at the same time is hell nah!"
+			ui_print " "
+			sleep 3
+		fi
+		ui_print "- Patching Kernel image..."
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksu.p
+	fi
+fi
 
-ui_print " " "-> 5.10 Kernel: $supp"
-$supp || exit 1
+if [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+	# KernelSU-Next
+	if keycode_select "Install KSUNxSUSFS?"; then
+		if [ $((magisk_patched & 3)) -eq 1 ]; then
+			ui_print "- Magisk detected!"
+			ui_print "- Magisk and KernelSU at the same time is hell nah!"
+			ui_print " "
+			sleep 3
+		fi
+		ui_print "- Patching Kernel image..."
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+	fi
+fi
 
 # boot install
 if [ -L "/dev/block/bootdevice/by-name/init_boot_a" -o -L "/dev/block/by-name/init_boot_a" ]; then
