@@ -30,16 +30,25 @@ PATCH_VBMETA_FLAG=auto;
 # import functions/variables and setup patching - see for reference (DO NOT REMOVE)
 . tools/ak3-core.sh
 
-KEYCODE_UP=42
-KEYCODE_DOWN=41
+kernel_version=$(cat /proc/version | awk -F '-' '{print $1}' | awk '{print $3}')
+case "$kernel_version" in
+    5.10.*) supp=true ;;
+    *) supp=false ;;
+esac
 
+ui_print " " "-> 5.10 Kernel: $supp"
+$supp || exit 1
+
+# Variant Selector
 get_keycheck_result() {
 	# Default behavior:
 	# - press Vol+: return true (0)
 	# - press Vol-: return false (1)
 
 	local rc_1 rc_2
-
+        local KEYCODE_UP=42
+        local KEYCODE_DOWN=41
+	
 	while true; do
 		# The first execution responds to the button press event,
 		# the second execution responds to the button release event.
