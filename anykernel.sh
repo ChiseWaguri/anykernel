@@ -68,27 +68,13 @@ keycode_select() {
 	r_keycode=$?
 	ui_print "#"
 	if [ "$r_keycode" -eq "0" ]; then
-		ui_print "- You chose Yes."
+		ui_print "- You choose Yes."
 	else
-		ui_print "- You chose No."
+		ui_print "- You choose No."
 	fi
 	ui_print " "
 	return $r_keycode
 }
-
-if [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
-	# KernelSU
-	if keycode_select "Install KernelSU-Next and SUSFS?"; then
-		if [ $((magisk_patched & 3)) -eq 1 ]; then
-			ui_print "- Magisk detected!"
-			ui_print "- Magisk and KernelSU at the same time is hell nah!"
-			ui_print " "
-			sleep 3
-		fi
-		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksu.p
-	fi
-fi
 
 if [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
 	# KernelSU
@@ -100,7 +86,7 @@ if [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
 			sleep 3
 		fi
 		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksu.p
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksu.p
 	fi
 fi
 
@@ -114,7 +100,7 @@ if [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
 			sleep 3
 		fi
 		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksun.p
 	fi
 fi
 
