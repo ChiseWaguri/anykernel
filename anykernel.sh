@@ -100,29 +100,31 @@ if [ -f "${AKHOME}/bs_patches/ksun.p" ] || [ -f "${AKHOME}/bs_patches/ksu.p" ]; 
 	fi
 fi
 
-
-if [ -f "${AKHOME}/bs_patches/ksu.p" ] && [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
-	# KernelSU
-	if keycode_select "Which variant of KernelSU do you want to Install?" "OG KernelSU" "KernelSU-Next"; then
-		ui_print "- Patching Kernel image with OG KernelSU..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksu.p
-	else
-		ui_print "- Patching Kernel image with KernelSU-Next..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
-	fi
-elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
-	# KernelSU
-	if keycode_select "Install OG KernelSU"; then
-		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
-	fi
-elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
-	# KernelSU-Next
-	if keycode_select "Install KernelSU?-Next"; then
-		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksun.p
+if [ $use_ksu == true ]; then
+	if [ -f "${AKHOME}/bs_patches/ksu.p" ] && [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+		# KernelSU
+		if keycode_select "Which variant of KernelSU do you want to Install?" "OG KernelSU" "KernelSU-Next"; then
+			ui_print "- Patching Kernel image with OG KernelSU..."
+			${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksu.p
+		else
+			ui_print "- Patching Kernel image with KernelSU-Next..."
+			${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+		fi
+	elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+		# KernelSU
+		if keycode_select "Install OG KernelSU"; then
+			ui_print "- Patching Kernel image..."
+			${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+		fi
+	elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+		# KernelSU-Next
+		if keycode_select "Install KernelSU?-Next"; then
+			ui_print "- Patching Kernel image..."
+			${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksun.p
+		fi
 	fi
 fi
+unset use_ksu
 
 # boot install
 if [ -L "/dev/block/bootdevice/by-name/init_boot_a" -o -L "/dev/block/by-name/init_boot_a" ]; then
