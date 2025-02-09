@@ -326,9 +326,6 @@ flash_boot() {
           magiskboot cpio ramdisk.cpio test;
           magisk_patched=$?;
         fi;
-        if [ "$magisk_patched" -eq 1 ] && file_getprop $AKHOME/anykernel.sh kernel.string | grep -q 'KSU'; then
-            abort "Magisk Detected, but you're installing the KSU variant!"
-        fi
         if [ "$magisk_patched" -eq 1 ]; then
           ui_print " " "Magisk detected! Patching kernel so reflashing Magisk is not necessary...";
           comp=$(magiskboot decompress kernel 2>&1 | grep -vE 'raw|zimage' | sed -n 's;.*\[\(.*\)\];\1;p');
@@ -776,7 +773,6 @@ patch_ueventd() {
     echo -ne "\n$newentry\n" >> $file;
   fi;
 }
-
 ###
 
 ### configuration/setup functions:
@@ -941,7 +937,7 @@ setup_ak() {
   if [ ! "$NO_BLOCK_DISPLAY" ]; then
     ui_print "$BLOCK";
   fi;
-
+  
   # allow multi-partition ramdisk modifying configurations (using reset_ak)
   name=$(basename $BLOCK | sed -e 's/_a$//' -e 's/_b$//');
   if [ "$BLOCK" ] && [ ! -d "$RAMDISK" -a ! -d "$PATCH" ]; then

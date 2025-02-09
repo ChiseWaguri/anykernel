@@ -64,50 +64,61 @@ get_keycheck_result() {
 
 keycode_select() {
 	local r_keycode
-
+	if [ -z "$msg1" ]; then
+	    msg1="Yes"
+	    msg2="No"
+	else
+        msg1="$2"
+        msg2="$3"
+    fi
 	ui_print " "
 	while [ $# != 0 ]; do
 		ui_print "# $1"
 		shift
 	done
 	ui_print "#"
-	ui_print "# Vol+ = Yes, Vol- = No."
+	ui_print "# Vol+ = $msg1, Vol- = $msg2."
 	ui_print "# Please press the key..."
 	get_keycheck_result
 	r_keycode=$?
 	ui_print "#"
 	if [ "$r_keycode" -eq "0" ]; then
-		ui_print "- You choose Yes."
+
+		ui_print "- You chose $msg1."
 	else
-		ui_print "- You choose No."
+		ui_print "- You chose $msg2."
 	fi
 	ui_print " "
 	return $r_keycode
 }
 
-if [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
-	# KernelSU
-	if keycode_select "Install KSUxSUSFS?"; then
-		if [ $((magisk_patched & 3)) -eq 1 ]; then
-			ui_print "- Magisk detected!"
-			ui_print "- Magisk and KernelSU at the same time is hell nah!"
-			ui_print " "
-			sleep 3
-		fi
-		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksu.p
+
+# KernelSU
+if [ -f "${AKHOME}/bs_patches/ksun.p" ] || [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
+	if keycode_select "Do you want to install KernelSU support??"; then
+	    use_ksu=true
 	fi
 fi
 
-if [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+
+if [ -f "${AKHOME}/bs_patches/ksu.p" ] && [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+	# KernelSU
+	if keycode_select "Which variant of KernelSU do you want to Install?" "OG KernelSU" "KernelSU-Next"; then
+		ui_print "- Patching Kernel image with OG KernelSU..."
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksu.p
+	else
+		ui_print "- Patching Kernel image with KernelSU-Next..."
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+	fi
+elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
+	# KernelSU
+	if keycode_select "Install OG KernelSU"; then
+		ui_print "- Patching Kernel image..."
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+	fi
+elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
 	# KernelSU-Next
-	if keycode_select "Install KSUNxSUSFS?"; then
-		if [ $((magisk_patched & 3)) -eq 1 ]; then
-			ui_print "- Magisk detected!"
-			ui_print "- Magisk and KernelSU at the same time is hell nah!"
-			ui_print " "
-			sleep 3
-		fi
+	if keycode_select "Install KernelSU?-Next"; then
 		ui_print "- Patching Kernel image..."
 		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksun.p
 	fi
