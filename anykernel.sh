@@ -30,16 +30,25 @@ PATCH_VBMETA_FLAG=auto;
 # import functions/variables and setup patching - see for reference (DO NOT REMOVE)
 . tools/ak3-core.sh
 
-KEYCODE_UP=42
-KEYCODE_DOWN=41
+kernel_version=$(cat /proc/version | awk -F '-' '{print $1}' | awk '{print $3}')
+case "$kernel_version" in
+    5.10.*) supp=true ;;
+    *) supp=false ;;
+esac
 
+ui_print " " "-> 5.10 Kernel: $supp"
+$supp || exit 1
+
+# Variant Selector
 get_keycheck_result() {
 	# Default behavior:
 	# - press Vol+: return true (0)
 	# - press Vol-: return false (1)
 
 	local rc_1 rc_2
-
+        local KEYCODE_UP=42
+        local KEYCODE_DOWN=41
+	
 	while true; do
 		# The first execution responds to the button press event,
 		# the second execution responds to the button release event.
@@ -74,6 +83,7 @@ keycode_select() {
 	r_keycode=$?
 	ui_print "#"
 	if [ "$r_keycode" -eq "0" ]; then
+
 		ui_print "- You chose $msg1."
 	else
 		ui_print "- You chose $msg2."
@@ -81,6 +91,7 @@ keycode_select() {
 	ui_print " "
 	return $r_keycode
 }
+
 
 # KernelSU
 if [ -f "${AKHOME}/bs_patches/ksun.p" ] || [ -f "${AKHOME}/bs_patches/ksu.p" ]; then
@@ -109,7 +120,7 @@ elif [ -f "${AKHOME}/bs_patches/ksun.p" ]; then
 	# KernelSU-Next
 	if keycode_select "Install KernelSU?-Next"; then
 		ui_print "- Patching Kernel image..."
-		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patches/ksun.p
+		${BIN}/bspatch ${AKHOME}/Image ${AKHOME}/Image ${AKHOME}/bs_patch/ksun.p
 	fi
 fi
 
